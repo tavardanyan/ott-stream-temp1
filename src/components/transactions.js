@@ -6,7 +6,7 @@ export function Transactions (params) {
     const { list, callback } = params
     const [transactions, setTransactions] = useState([])
 
-    const cb = (invoices, key, value) => {
+    const cb = (invoices, locationId, packageId, key, value) => {
         const dataKey = `${invoices}_${key}}`
         let dataList = transactions.filter(z => !z.hasOwnProperty(dataKey))
 
@@ -14,6 +14,8 @@ export function Transactions (params) {
             [dataKey]: {
                 key,
                 invoice: invoices,
+                locationId,
+                packageId,
                 value
             }
         })
@@ -59,7 +61,7 @@ export function Transactions (params) {
                     <span>
                         {pack.expireNew ? 
                         <DatePickerComponent date={pack.expireNew} 
-                            cb={(date) => cb(item.invoice.id, 'expireNew', {
+                            cb={(date) => cb(item.invoice.id, location.locationId, pack.packageId, 'expireNew', {
                                 from: pack.expireNew, to: date
                             })} /> : null}
                     </span>
@@ -69,7 +71,7 @@ export function Transactions (params) {
                     <span>
                         {pack.expireDate ? 
                         <DatePickerComponent date={pack.expireDate} 
-                            cb={(date) => cb(item.invoice.id, 'expireDate', {
+                            cb={(date) => cb(item.invoice.id, location.locationId, pack.packageId, 'expireDate', {
                                 from: pack.expireDate, to: date
                             })} /> : null}
                     </span>
@@ -79,7 +81,7 @@ export function Transactions (params) {
                     <span>
                         {pack.startDate ? 
                         <DatePickerComponent date={pack.startDate} 
-                            cb={(date) => cb(item.invoice.id, 'startDate', {
+                            cb={(date) => cb(item.invoice.id, location.locationId, pack.packageId, 'startDate', {
                                 from: pack.startDate, to: date
                             })} /> : null}
                     </span>

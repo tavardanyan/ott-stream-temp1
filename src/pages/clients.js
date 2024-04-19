@@ -7,6 +7,7 @@ import { Subscriptions } from "../components/subscriptions"
 import { Bills } from "../components/bill"
 import { Transactions } from "../components/transactions"
 import { ClientInfo } from "../components/client.info"
+import { mainConfig } from "../config"
 
 export function Clients() {
     const { id } = useParams()
@@ -20,14 +21,14 @@ export function Clients() {
     const [data, setData] = useState([])
 
     useEffect(() => {
-        axios.get(`https://panelapi.ottstream.live/v1/clients/edit/${id}`, {
+        axios.get(`${mainConfig.backUrl}/v1/clients/edit/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         })
         .then(result => setInfo(result.data))
-        axios.get(`https://panelapi.ottstream.live/v1/clients/locations/${id}`, {
+        axios.get(`${mainConfig.backUrl}/v1/clients/locations/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -38,7 +39,7 @@ export function Clients() {
             setSelectedLocation(res.data[0]);
             return new Promise(resolve => resolve(getLocationDetails(res.data[0])))
         })
-        axios.post('https://panelapi.ottstream.live/v1/invoices/invoiceFilter', {
+        axios.post(`${mainConfig.backUrl}/v1/invoices/invoiceFilter`, {
             limit: 15,
             page: 1,
             sortBy: "_id:desc",
@@ -50,7 +51,7 @@ export function Clients() {
             }
         })
         .then(res => setBillList(res.data.results))
-        axios.get(`https://panelapi.ottstream.live/v1/transactions/client/${id}?page=1&limit=20&sortBy=executionDate:desc`, {
+        axios.get(`${mainConfig.backUrl}/v1/transactions/client/${id}?page=1&limit=20&sortBy=executionDate:desc`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -61,7 +62,7 @@ export function Clients() {
 
 
     const getLocationDetails = async (loc) => {
-        const data = await axios.post('https://panelapi.ottstream.live/v1/subscriptions/location/', {
+        const data = await axios.post(`${mainConfig.backUrl}/v1/subscriptions/location/`, {
             locations:[{
                 locationId:  loc.id,
                 packageInfos:[],
@@ -81,7 +82,7 @@ export function Clients() {
     }
 
     const getSubscriptionList = (loc) => {
-        return axios.get(`https://panelapi.ottstream.live/v1/subscriptions?location=${loc.id}`, {
+        return axios.get(`${mainConfig.backUrl}/v1/subscriptions?location=${loc.id}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -106,7 +107,7 @@ export function Clients() {
 
     const save = () => {
         if (data && data.length) {
-            axios.post('https://panelapi.ottstream.live/v1/webhook/inject', data, {
+            axios.post(`${mainConfig.backUrl}/v1/webhook/inject`, {data}, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`

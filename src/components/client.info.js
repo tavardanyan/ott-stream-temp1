@@ -4,11 +4,11 @@ import { DatePickerComponent } from "./datepicker";
 export function ClientInfo(params) {
     const { client, callback } = params
 
-    const cb = (from, to) => {
+    const cb = (from, to, locationLogin) => {
         return callback({
             client: { 
                 locationExpireDate: {
-                    from, to, client: client.id, key: 'locationExpireDate'
+                    from, to, client: client.id, key: 'locationExpireDate', locationLogin
                 }
             }
         })
@@ -24,7 +24,7 @@ export function ClientInfo(params) {
                 {client.info.locations.map((item, index) => <div key={index} className="G-client-location">
                     <div>Location login: {item.login}</div>
                     <div>Location State: {getClientStatus(item.subscriptionState)}</div>
-                    <div>Location ExpireDate: {item.subscriptionExpireDate ? <DatePickerComponent date={item.subscriptionExpireDate} cb={(date) => cb(item.subscriptionExpireDate, date)} /> : null}</div>
+                    <div>Location ExpireDate: {item.subscriptionExpireDate ? <DatePickerComponent date={item.subscriptionExpireDate} cb={(date) => cb(item.subscriptionExpireDate, date, item.login)} /> : null}</div>
                 </div>)}
             </div>
         </div>

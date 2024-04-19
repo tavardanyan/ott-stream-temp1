@@ -2,6 +2,7 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useNavigate } from 'react-router-dom';
 import { getClientStatus, getStatusesColor } from "../helpers/status";
+import { mainConfig } from "../config";
 
 export function Dashboard() {
     const [client, setClient] = useState('')
@@ -9,7 +10,7 @@ export function Dashboard() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        client && client.length > 1 ? axios.get(`https://panelapi.ottstream.live/v1/clients/globalSearch?search=${client}`, {
+        client && client.length > 1 ? axios.get(`${mainConfig.backUrl}/v1/clients/globalSearch?search=${client}`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
