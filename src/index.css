@@ -316,6 +316,7 @@ code {
 .G-transaction-packages {
   margin: 15px;
   display: flex;
+  overflow-x: auto;
 }
 
 .G-transaction-package {

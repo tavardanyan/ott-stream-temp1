@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Checkbox } from "./checkbox";
 import { DatePickerComponent } from "./datepicker";
+import { Dropdown } from "./dropdown";
 
 export function Subscriptions(params) {
     const { list, fetch, location, callback } = params;
@@ -27,14 +28,12 @@ export function Subscriptions(params) {
     }
     
     const cb = (id, key, value) => {
-        
         const type = ['subscriptionCancelDate',
             'subscriptionExpireDate',
             'subscriptionPendingDate',
             'subscriptionActivationDate'].includes(key) ? 'location' : 'subscription'
 
         let dataList = subscription.filter(z => !(z[type] === id && z.key === key))
-
         dataList.push({
                 [type]: id,
                 key,
@@ -44,8 +43,6 @@ export function Subscriptions(params) {
         callback({ subscription: dataList })
         
     }
-
-    // console.log(list, 'listtttttt');
 
     return <div className="G-subscriptions">
             <div className="G-subscription G-subscription-col">
@@ -67,14 +64,15 @@ export function Subscriptions(params) {
                 disabled={getPackageStatus(item.packageId) === 'canceled'} />
             <div className="subscription_name col">{ item.packageName[0].name }</div>
             <div className="subscription_expire_date col">
-                {item.expireDate ? 
-                <Checkbox 
-                    id={getSubscriptionByPackage(item.packageId)}
-                    checked={!(item.canceled || item.expired || item.disabled)}
-                    cb={(id, state) => cb(id,'isActive', {
+                {console.log(item, 'iteeeem', fetch, 'fetch')}
+            {item.expireDate ? 
+                <Dropdown
+                    options={[{ label: 'active', value: 1 }, { label: 'inactive', value: 2 }]}
+                    selected={getPackageStatus(item.packageId) === 'active' ? 1 : 2}
+                    onSelect={(option => cb(getSubscriptionByPackage(item.packageId), 'isActive', {
                         oldState: !(item.canceled || item.expired || item.disabled),
-                        currnetState: state
-                    })} /> : null}
+                        currnetState: option.value === 1
+                    }))} /> : null}
             </div>
             <div className="subscription_expire_date col">
                 {item.startDate ? 

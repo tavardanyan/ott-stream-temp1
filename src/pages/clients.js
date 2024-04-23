@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import axios from "axios"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { getClientStatus, getStatusesColor } from "../helpers/status"
@@ -8,6 +7,8 @@ import { Bills } from "../components/bill"
 import { Transactions } from "../components/transactions"
 import { ClientInfo } from "../components/client.info"
 import { mainConfig } from "../config"
+import { BillGenerator } from "../components/generate.bill"
+import { Request } from "../request"
 
 export function Clients() {
     const { id } = useParams()
@@ -21,48 +22,25 @@ export function Clients() {
     const [data, setData] = useState([])
 
     useEffect(() => {
-        axios.get(`${mainConfig.backUrl}/v1/clients/edit/${id}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+        Request.get(`${mainConfig.backUrl}/v1/clients/edit/${id}`).then(result => setInfo(result))
+        Request.get(`${mainConfig.backUrl}/v1/clients/locations/${id}`).then(res => {
+            setLocations(res); 
+            setSelectedLocation(res[0]);
+            return new Promise(resolve => resolve(getLocationDetails(res[0])))
         })
-        .then(result => setInfo(result.data))
-        axios.get(`${mainConfig.backUrl}/v1/clients/locations/${id}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        .then(res => {
-            setLocations(res.data); 
-            setSelectedLocation(res.data[0]);
-            return new Promise(resolve => resolve(getLocationDetails(res.data[0])))
-        })
-        axios.post(`${mainConfig.backUrl}/v1/invoices/invoiceFilter`, {
+        Request.post(`${mainConfig.backUrl}/v1/invoices/invoiceFilter`, {
             limit: 15,
             page: 1,
             sortBy: "_id:desc",
             client: id
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        .then(res => setBillList(res.data.results))
-        axios.get(`${mainConfig.backUrl}/v1/transactions/client/${id}?page=1&limit=20&sortBy=executionDate:desc`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        .then(res => setTransactions(res.data.results))
+        }).then(res => setBillList(res.results))
+        Request.get(`${mainConfig.backUrl}/v1/transactions/client/${id}?page=1&limit=20&sortBy=executionDate:desc`)
+        .then(res => setTransactions(res.results))
      }, [id])
 
 
     const getLocationDetails = async (loc) => {
-        const data = await axios.post(`${mainConfig.backUrl}/v1/subscriptions/location/`, {
+        const data = await Request.post(`${mainConfig.backUrl}/v1/subscriptions/location/`, {
             locations:[{
                 locationId:  loc.id,
                 packageInfos:[],
@@ -70,24 +48,14 @@ export function Clients() {
                 equipments:[],
                 selectedLocation:  loc.id,
                 client: loc.clientId?.id
-            }, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        const index = data.data.locations.findIndex(i => i.locationId === loc.id)
-        setPackages(data.data.locations[index].packages)
+            })
+        const index = data.locations.findIndex(i => i.locationId === loc.id)
+        setPackages(data.locations[index].packages)
         getSubscriptionList(loc)
     }
 
     const getSubscriptionList = (loc) => {
-        return axios.get(`${mainConfig.backUrl}/v1/subscriptions?location=${loc.id}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        }).then(data => setActivePackages(data.data))
+        return Request.get(`${mainConfig.backUrl}/v1/subscriptions?location=${loc.id}`).then(data => setActivePackages(data))
     }
 
     const selectLocation = (loc) => {
@@ -107,19 +75,15 @@ export function Clients() {
 
     const save = () => {
         if (data && data.length) {
-            axios.post(`${mainConfig.backUrl}/v1/webhook/inject`, {data}, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        })
-        .then(res => alert(res.data.message))
+            Request.post(`${mainConfig.backUrl}/v1/webhook/inject`, {data})
+            .then(res => alert(res.message))
         } else alert('No changes')
     }
 
     return <><div className="G-locations">
         <div className="G-save">
             <button onClick={save}>Save</button>
+            <BillGenerator />
         </div>
         {info ? <ClientInfo client={info} callback={cb} /> : null}
         {locations.length && location ? locations.map((item, index) => <div 

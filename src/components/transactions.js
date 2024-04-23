@@ -7,7 +7,7 @@ export function Transactions (params) {
     const [transactions, setTransactions] = useState([])
 
     const cb = (invoices, locationId, packageId, key, value) => {
-        const dataKey = `${invoices}_${key}}`
+        const dataKey = `${invoices}_${packageId}_${key}}`
         let dataList = transactions.filter(z => !z.hasOwnProperty(dataKey))
 
         dataList.push({

@@ -1,8 +1,8 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
 import { useNavigate } from 'react-router-dom';
 import { getClientStatus, getStatusesColor } from "../helpers/status";
 import { mainConfig } from "../config";
+import { Request } from "../request";
 
 export function Dashboard() {
     const [client, setClient] = useState('')
@@ -10,12 +10,10 @@ export function Dashboard() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        client && client.length > 1 ? axios.get(`${mainConfig.backUrl}/v1/clients/globalSearch?search=${client}`, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
-        }).then(data => setClientsList(data.data)).catch(err => console.error(err)) : setClientsList([])
+        client && client.length > 1 ? Request.get(`${mainConfig.backUrl}/v1/clients/globalSearch?search=${client}`).then(data => {
+            console.log(data);
+            setClientsList(data)
+        }).catch(err => console.error(err)) : setClientsList([])
     },[client])
 
     return <div className="G-page P-dashboard">
