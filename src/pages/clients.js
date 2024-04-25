@@ -7,7 +7,7 @@ import { Bills } from "../components/bill"
 import { Transactions } from "../components/transactions"
 import { ClientInfo } from "../components/client.info"
 import { mainConfig } from "../config"
-import { BillGenerator } from "../components/generate.bill"
+// import { BillGenerator } from "../components/generate.bill"
 import { Request } from "../request"
 
 export function Clients() {
@@ -80,10 +80,16 @@ export function Clients() {
         } else alert('No changes')
     }
 
+    const updateData = () => {
+        Request.post(`${mainConfig.backUrl}/v1/webhook/replace`, {})
+        .then(res => alert('success'))
+    }
+
     return <><div className="G-locations">
         <div className="G-save">
             <button onClick={save}>Save</button>
-            <BillGenerator />
+            <button onClick={updateData}>Update</button>
+            {/* <BillGenerator /> */}
         </div>
         {info ? <ClientInfo client={info} callback={cb} /> : null}
         {locations.length && location ? locations.map((item, index) => <div 
