@@ -1,3 +1,3 @@
 export const mainConfig = {
-    backUrl: 'https://panelapi.ottstream.live'
+    backUrl: 'http://localhost:3001'
 }

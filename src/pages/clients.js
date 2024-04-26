@@ -76,7 +76,10 @@ export function Clients() {
     const save = () => {
         if (data && data.length) {
             Request.post(`${mainConfig.backUrl}/v1/webhook/inject`, {data})
-            .then(res => alert(res.message))
+            .then(res => {
+                alert(res.message)
+                window.location.reload()
+            })
         } else alert('No changes')
     }
 
@@ -86,18 +89,33 @@ export function Clients() {
     // }
 
     const updateLocations = () => {
-        Request.post(`${mainConfig.backUrl}/v1/webhook/locations`, {})
-        .then(res => alert('success'))
+        Request.post(`${mainConfig.backUrl}/v1/webhook/locations`, {
+            client: id
+        })
+        .then(res => {
+            alert(res.message)
+            window.location.reload()
+        })
     }
 
     const updateClients = () => {
-        Request.post(`${mainConfig.backUrl}/v1/webhook/client`, {})
-        .then(res => alert('success'))
+        Request.post(`${mainConfig.backUrl}/v1/webhook/client`, {
+            client: id
+        })
+        .then(res => {
+            alert(res.message)
+            window.location.reload()
+        })
     }
 
     const updateClientInfos = () => {
-        Request.post(`${mainConfig.backUrl}/v1/webhook/info`, {})
-        .then(res => alert('success'))
+        Request.post(`${mainConfig.backUrl}/v1/webhook/info`, {
+            client: id
+        })
+        .then(res => {
+            alert(res.message)
+            window.location.reload()
+        })
     }
 
 
