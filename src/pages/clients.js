@@ -80,15 +80,34 @@ export function Clients() {
         } else alert('No changes')
     }
 
-    const updateData = () => {
-        Request.post(`${mainConfig.backUrl}/v1/webhook/replace`, {})
+    // const updateData = () => {
+    //     Request.post(`${mainConfig.backUrl}/v1/webhook/replace`, {})
+    //     .then(res => alert('success'))
+    // }
+
+    const updateLocations = () => {
+        Request.post(`${mainConfig.backUrl}/v1/webhook/locations`, {})
         .then(res => alert('success'))
     }
+
+    const updateClients = () => {
+        Request.post(`${mainConfig.backUrl}/v1/webhook/client`, {})
+        .then(res => alert('success'))
+    }
+
+    const updateClientInfos = () => {
+        Request.post(`${mainConfig.backUrl}/v1/webhook/info`, {})
+        .then(res => alert('success'))
+    }
+
 
     return <><div className="G-locations">
         <div className="G-save">
             <button onClick={save}>Save</button>
-            <button onClick={updateData}>Update</button>
+            {/* <button onClick={updateData}>Update</button> */}
+            <button onClick={updateLocations}>Update Locations</button>
+            <button onClick={updateClients}>Update Clients</button>
+            <button onClick={updateClientInfos}>Update Info</button>
             {/* <BillGenerator /> */}
         </div>
         {info ? <ClientInfo client={info} callback={cb} /> : null}
