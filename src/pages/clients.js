@@ -118,6 +118,16 @@ export function Clients() {
         })
     }
 
+    const updateRefunds = () => {
+        Request.post(`${mainConfig.backUrl}/v1/webhook/refund`, {
+            client: id
+        })
+        .then(res => {
+            alert(res.message)
+            window.location.reload()
+        })
+    }
+
 
     return <><div className="G-locations">
         <div className="G-save">
@@ -126,6 +136,7 @@ export function Clients() {
             <button onClick={updateLocations}>Update Locations</button>
             <button onClick={updateClients}>Update Clients</button>
             <button onClick={updateClientInfos}>Update Info</button>
+            <button onClick={updateRefunds}>Dont touch please</button>
             {/* <BillGenerator /> */}
         </div>
         {info ? <ClientInfo client={info} callback={cb} /> : null}
