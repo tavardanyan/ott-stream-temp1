@@ -20,6 +20,7 @@ export function Clients() {
     const [transactions, setTransactions] = useState([])
     const [info, setInfo] = useState(null)
     const [data, setData] = useState([])
+    const [newPackageList, setNewPackageList ] = useState([])
 
     useEffect(() => {
         Request.get(`${mainConfig.backUrl}/v1/clients/edit/${id}`).then(result => setInfo(result))
@@ -120,13 +121,40 @@ export function Clients() {
 
     const updateRefunds = () => {
         Request.post(`${mainConfig.backUrl}/v1/webhook/refund`, {
-            client: id
+            packages: newPackageList,
+            location,
+            locationId: location.id
         })
         .then(res => {
             alert(res.message)
             window.location.reload()
         })
+        // alert('NoNoNo')
     }
+
+    // totalPrice: package.totalPrice,
+    // toResaleTotalPrice: package.toResaleTotalPrice,
+    // recurringPayment: false,
+    // packageId: package.id,
+    // packageName: package.name,
+    // expireNew: null
+
+    const addNewPackage = (data) => {
+        const pack = {
+            totalPrice: data.currentPrice,
+            toResaleTotalPrice: data.currentPrice,
+            packageId: data.packageId,
+            packageName: data.packageName
+        }
+
+        const index = newPackageList.findIndex(x => x.packageId === pack.packageId)
+        if (index > -1) {
+            newPackageList.slice(index, 1)
+        }
+        newPackageList.push(pack)
+        setNewPackageList(newPackageList)
+    }
+
 
 
     return <><div className="G-locations">
@@ -151,6 +179,7 @@ export function Clients() {
             list={packages} 
             location={location}
             callback={cb} 
+            newCb={addNewPackage}
             fetch={activePackages} /> : null}
         {billList.length ? <Bills list={billList} /> : null}
         {transactions.length ? <Transactions list={transactions} callback={cb} /> : null}

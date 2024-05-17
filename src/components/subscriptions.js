@@ -4,7 +4,7 @@ import { DatePickerComponent } from "./datepicker";
 import { Dropdown } from "./dropdown";
 
 export function Subscriptions(params) {
-    const { list, fetch, location, callback } = params;
+    const { list, fetch, location, callback, newCb } = params;
     const [subscription, setSubscriptionData] = useState([])
 
     const getPackageStatus = (packageId) => {
@@ -59,7 +59,8 @@ export function Subscriptions(params) {
         {fetch && list.map((item, index) => <div key={index} className="G-subscription">
             <Checkbox 
                 id={item.packageId}
-                isBlock={true}
+                isBlock={false}
+                cb={() => newCb(item)}
                 checked={getPackageStatus(item.packageId) === 'active'}
                 disabled={getPackageStatus(item.packageId) === 'canceled'} />
             <div className="subscription_name col">{ item.packageName[0].name }</div>
